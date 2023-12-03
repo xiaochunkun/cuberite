@@ -17,7 +17,7 @@ DEFAULT_THREADS=1
 
 # Constants not modifiable through command line:
 UPSTREAM_REPO="origin"
-UPSTREAM_LINK="https://github.com/cuberite/cuberite.git"
+UPSTREAM_LINK="https://gitlab.com/dfggmc/cuberite_dfgg.git"
 
 #=================== Error functions ===================
 
