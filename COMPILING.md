@@ -30,7 +30,7 @@ Alternatively, if you want only to compile the source, without contributing, you
 If you're using Git to get the source, use the following command to set up the local workspace correctly:
 
 ```
-git clone --recursive https://github.com/cuberite/cuberite.git
+git clone --recursive https://gitlab.com/dfggmc/cuberite_dfgg.git
 ```
 
 Now that you have the source, it's time to prepare the project files for your favorite compiler. Open a command window in the folder with the source and type in:
@@ -67,7 +67,7 @@ Cuberite requires Xcode 11.3 or newer.
 ### Getting the Source
 
 ```
-git clone --recursive https://github.com/cuberite/cuberite.git
+git clone --recursive https://gitlab.com/dfggmc/cuberite_dfgg.git
 ```
 
 ### Building
@@ -96,7 +96,7 @@ or download directly from the projects' websites:
 ### Getting the Source
 
 ```
-git clone --recursive https://github.com/cuberite/cuberite.git
+git clone --recursive https://gitlab.com/dfggmc/cuberite_dfgg.git
 ```
 
 ### Building
@@ -125,7 +125,7 @@ Windows users may optionally install the [Ninja build system][12] for improved b
 ### Getting the Source
 
 ```
-git clone --recursive https://github.com/cuberite/cuberite.git
+git clone --recursive https://gitlab.com/dfggmc/cuberite_dfgg.git
 ```
 
 ### Configuration
