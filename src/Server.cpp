@@ -151,8 +151,9 @@ void cServer::PlayerDestroyed()
 
 
 bool cServer::InitServer(cSettingsRepositoryInterface & a_Settings, bool a_ShouldAuth)
+bool cServer::InitServer(cSettingsRepositoryInterface & a_Settings, bool a_ShouldAuth)
 {
-	m_Description = a_Settings.GetValueSet("Server", "Description", "Cuberite - in C++!");
+	m_Description = a_Settings.GetValueSet("Server", "Description", "Cuberite_dfgg - in C++!");
 	m_ShutdownMessage = a_Settings.GetValueSet("Server", "ShutdownMessage", "Server shutdown");
 	m_MaxPlayers = static_cast<size_t>(a_Settings.GetValueSetI("Server", "MaxPlayers", 100));
 	m_bIsHardcore = a_Settings.GetValueSetB("Server", "HardcoreEnabled", false);
@@ -161,16 +162,17 @@ bool cServer::InitServer(cSettingsRepositoryInterface & a_Settings, bool a_Shoul
 	m_ResourcePackUrl = a_Settings.GetValueSet("Server", "ResourcePackUrl", "");
 	m_CustomRedirectUrl = a_Settings.GetValueSet("Server", "CustomRedirectUrl", "https://youtu.be/dQw4w9WgXcQ");
 
+
 	m_FaviconData = Base64Encode(cFile::ReadWholeFile(AString("favicon.png")));  // Will return empty string if file nonexistant; client doesn't mind
 
 	if (m_bIsConnected)
 	{
-		LOGERROR("ERROR: Trying to initialize server while server is already running!");
+		LOGERROR("错误：在服务器已在运行时尝试初始化服务器！");
 		return false;
 	}
 
-	LOGINFO("Compatible clients: %s", MCS_CLIENT_VERSIONS);
-	LOGD("Compatible protocol versions %s", MCS_PROTOCOL_VERSIONS);
+	LOGINFO("兼容客户端: %s", MCS_CLIENT_VERSIONS);
+	LOGD("兼容的协议版本 %s", MCS_PROTOCOL_VERSIONS);
 
 	m_Ports = ReadUpgradeIniPorts(a_Settings, "Server", "Ports", "Port", "PortsIPv6", "25565");
 
@@ -197,14 +199,15 @@ bool cServer::InitServer(cSettingsRepositoryInterface & a_Settings, bool a_Shoul
 	m_OnlyAllowBungeeCord = a_Settings.GetValueSetB("Authentication", "OnlyAllowBungeeCord", false);
 	m_ProxySharedSecret = a_Settings.GetValueSet("Authentication", "ProxySharedSecret", "");
 
+
 	if (m_ShouldAllowBungeeCord && m_ShouldAuthenticate)
 	{
-		LOGWARNING("WARNING: BungeeCord is allowed and server set to online mode. This is unsafe and will not work properly. Disable either authentication or BungeeCord in settings.ini.");
+		LOGWARNING("警告：允许使用BungeeCord，服务器设置为在线模式。这是不安全的，无法正常工作。在settings.ini中禁用身份验证或BungeeCord。");
 	}
 
 	if (m_ShouldAllowBungeeCord && m_ProxySharedSecret.empty())
 	{
-		LOGWARNING("WARNING: There is not a Proxy Forward Secret set up, and any proxy server can forward a player to this server unless closed from the internet.");
+		LOGWARNING("警告：没有设置代理转发密钥，任何代理服务器都可以将玩家转发到此服务器，除非从 Internet 关闭。");
 	}
 
 	m_ShouldAllowMultiWorldTabCompletion = a_Settings.GetValueSetB("Server", "AllowMultiWorldTabCompletion", true);
@@ -214,12 +217,12 @@ bool cServer::InitServer(cSettingsRepositoryInterface & a_Settings, bool a_Shoul
 	if (ClientViewDistance < cClientHandle::MIN_VIEW_DISTANCE)
 	{
 		m_ClientViewDistance = cClientHandle::MIN_VIEW_DISTANCE;
-		LOGINFO("Setting default view distance to the minimum of %d", m_ClientViewDistance);
+		LOGINFO("将默认视图距离设置为最小值 %d", m_ClientViewDistance);
 	}
 	else if (ClientViewDistance > cClientHandle::MAX_VIEW_DISTANCE)
 	{
 		m_ClientViewDistance = cClientHandle::MAX_VIEW_DISTANCE;
-		LOGINFO("Setting default view distance to the maximum of %d", m_ClientViewDistance);
+		LOGINFO("将默认视图距离设置为最大值 %d", m_ClientViewDistance);
 	}
 	else
 	{
@@ -307,7 +310,7 @@ bool cServer::IsPlayerInQueue(const AString & a_Username)
 
 void cServer::PrepareKeys(void)
 {
-	LOGD("Generating protocol encryption keypair...");
+	LOGD("正在生成协议加密密钥对...");
 	VERIFY(m_PrivateKey.Generate(1024));
 	m_PublicKeyDER = m_PrivateKey.GetPubKeyDER();
 }
@@ -404,7 +407,7 @@ bool cServer::Start(void)
 		UInt16 PortNum;
 		if (!StringToInteger(port, PortNum))
 		{
-			LOGWARNING("Invalid port specified for server: \"%s\". Ignoring.", port.c_str());
+			LOGWARNING("为服务器指定的端口无效： \"%s\". 忽略。", port.c_str());
 			continue;
 		}
 		auto Handle = cNetwork::Listen(PortNum, std::make_shared<cServerListenCallbacks>(*this, PortNum));
@@ -415,7 +418,7 @@ bool cServer::Start(void)
 	}  // for port - Ports[]
 	if (m_ServerHandles.empty())
 	{
-		LOGERROR("Couldn't open any ports. Aborting the server");
+		LOGERROR("无法打开任何端口。中止服务器");
 		return false;
 	}
 	m_TickThread.Start();
@@ -477,7 +480,7 @@ void cServer::ExecuteConsoleCommand(const AString & a_Cmd, cCommandOutputCallbac
 
 	// "stop" and "restart" are handled in cRoot::ExecuteConsoleCommand, our caller, due to its access to controlling variables
 
-	// "help" and "reload" are to be handled by Cuberite, so that they work no matter what
+	// "help" and "reload" are to be handled by dfgg, so that they work no matter what
 	if (split[0] == "help")
 	{
 		PrintHelp(split, a_Output);
@@ -489,7 +492,7 @@ void cServer::ExecuteConsoleCommand(const AString & a_Cmd, cCommandOutputCallbac
 		if (split.size() > 1)
 		{
 			cPluginManager::Get()->ReloadPlugin(split[1]);
-			a_Output.OutLn("Plugin reload scheduled");
+			a_Output.OutLn("插件重新加载计划");
 		}
 		else
 		{
@@ -501,14 +504,14 @@ void cServer::ExecuteConsoleCommand(const AString & a_Cmd, cCommandOutputCallbac
 	else if (split[0] == "reloadplugins")
 	{
 		cPluginManager::Get()->ReloadPlugins();
-		a_Output.OutLn("Plugins reloaded");
+		a_Output.OutLn("插件重新加载");
 		a_Output.Finished();
 		return;
 	}
 	else if (split[0] == "reloadweb")
 	{
 		cRoot::Get()->GetWebAdmin()->Reload();
-		a_Output.OutLn("WebAdmin configuration reloaded");
+		a_Output.OutLn("重新加载 WebAdmin 配置");
 		a_Output.Finished();
 		return;
 	}
@@ -517,11 +520,11 @@ void cServer::ExecuteConsoleCommand(const AString & a_Cmd, cCommandOutputCallbac
 		if (split.size() > 1)
 		{
 			cPluginManager::Get()->RefreshPluginList();  // Refresh the plugin list, so that if the plugin was added just now, it is loadable
-			a_Output.OutLn(cPluginManager::Get()->LoadPlugin(split[1]) ? "Plugin loaded" : "Error occurred loading plugin");
+			a_Output.OutLn(cPluginManager::Get()->LoadPlugin(split[1]) ? "插件已加载" : "加载插件时出错");
 		}
 		else
 		{
-			a_Output.OutLn("Usage: load <PluginFolder>");
+			a_Output.OutLn("用法: load <插件文件夹>");
 		}
 		a_Output.Finished();
 		return;
@@ -531,11 +534,11 @@ void cServer::ExecuteConsoleCommand(const AString & a_Cmd, cCommandOutputCallbac
 		if (split.size() > 1)
 		{
 			cPluginManager::Get()->UnloadPlugin(split[1]);
-			a_Output.OutLn("Plugin unload scheduled");
+			a_Output.OutLn("插件已卸载");
 		}
 		else
 		{
-			a_Output.OutLn("Usage: unload <PluginFolder>");
+			a_Output.OutLn("用法: unload <插件文件夹>");
 		}
 		a_Output.Finished();
 		return;
@@ -556,7 +559,7 @@ void cServer::ExecuteConsoleCommand(const AString & a_Cmd, cCommandOutputCallbac
 				return false;
 			}
 		);
-		a_Output.OutLn("Destroyed all entities");
+		a_Output.OutLn("销毁所有实体");
 		a_Output.Finished();
 		return;
 	}
@@ -581,7 +584,7 @@ void cServer::ExecuteConsoleCommand(const AString & a_Cmd, cCommandOutputCallbac
 		return;
 	}
 
-	a_Output.OutLn("Unknown command, type 'help' for all commands.");
+	a_Output.OutLn("未知命令，请为所有命令键入“help”。");
 	a_Output.Finished();
 }
 
@@ -653,15 +656,15 @@ void cServer::BindBuiltInConsoleCommands(void)
 
 	// Register internal commands:
 	cPluginManager * PlgMgr = cPluginManager::Get();
-	PlgMgr->BindConsoleCommand("help",            nullptr, handler, "Shows the available commands");
-	PlgMgr->BindConsoleCommand("reload",          nullptr, handler, "Reloads all plugins");
-	PlgMgr->BindConsoleCommand("reloadweb",       nullptr, handler, "Reloads the webadmin configuration");
-	PlgMgr->BindConsoleCommand("restart",         nullptr, handler, "Restarts the server cleanly");
-	PlgMgr->BindConsoleCommand("stop",            nullptr, handler, "Stops the server cleanly");
-	PlgMgr->BindConsoleCommand("chunkstats",      nullptr, handler, "Displays detailed chunk memory statistics");
-	PlgMgr->BindConsoleCommand("load",            nullptr, handler, "Adds and enables the specified plugin");
-	PlgMgr->BindConsoleCommand("unload",          nullptr, handler, "Disables the specified plugin");
-	PlgMgr->BindConsoleCommand("destroyentities", nullptr, handler, "Destroys all entities in all worlds");
+	PlgMgr->BindConsoleCommand("help",            nullptr, handler, "显示可用命令");
+	PlgMgr->BindConsoleCommand("reload",          nullptr, handler, "重新加载所有插件");
+	PlgMgr->BindConsoleCommand("reloadweb",       nullptr, handler, "重新加载 webadmin 配置");
+	PlgMgr->BindConsoleCommand("restart",         nullptr, handler, "干净地重新启动服务器");
+	PlgMgr->BindConsoleCommand("stop",            nullptr, handler, "干净地停止服务器");
+	PlgMgr->BindConsoleCommand("chunkstats",      nullptr, handler, "显示详细的块内存统计信息");
+	PlgMgr->BindConsoleCommand("load",            nullptr, handler, "添加并启用指定的插件");
+	PlgMgr->BindConsoleCommand("unload",          nullptr, handler, "禁用指定的插件");
+	PlgMgr->BindConsoleCommand("destroyentities", nullptr, handler, "摧毁所有世界中的所有实体");
 }
 
 
@@ -719,7 +722,7 @@ void cServer::AuthenticateUser(int a_ClientID, AString && a_Username, const cUUI
 	// Check max players condition within lock (expect server and authenticator thread to both call here)
 	if (GetNumPlayers() >= GetMaxPlayers())
 	{
-		KickUser(a_ClientID, "The server is currently full :(" "\n" "Try again later?");
+		KickUser(a_ClientID, "服务器当前已满：(" "\n" "请稍后再试？");
 		return;
 	}
 
