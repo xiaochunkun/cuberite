@@ -151,7 +151,6 @@ void cServer::PlayerDestroyed()
 
 
 bool cServer::InitServer(cSettingsRepositoryInterface & a_Settings, bool a_ShouldAuth)
-bool cServer::InitServer(cSettingsRepositoryInterface & a_Settings, bool a_ShouldAuth)
 {
 	m_Description = a_Settings.GetValueSet("Server", "Description", "Cuberite_dfgg - in C++!");
 	m_ShutdownMessage = a_Settings.GetValueSet("Server", "ShutdownMessage", "服务器已关闭");
