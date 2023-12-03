@@ -46,7 +46,7 @@ class cServerListenCallbacks:
 
 	virtual void OnError(int a_ErrorCode, const AString & a_ErrorMsg) override
 	{
-		LOGWARNING("Cannot listen on port %d: %d (%s).", m_Port, a_ErrorCode, a_ErrorMsg.c_str());
+		LOGWARNING("无法侦听端口 %d: %d (%s).", m_Port, a_ErrorCode, a_ErrorMsg.c_str());
 	}
 
 public:
@@ -65,7 +65,7 @@ public:
 // cServer::cTickThread:
 
 cServer::cTickThread::cTickThread(cServer & a_Server) :
-	Super("Server Ticker"),
+	Super("服务器代码"),
 	m_Server(a_Server)
 {
 }
@@ -154,7 +154,7 @@ bool cServer::InitServer(cSettingsRepositoryInterface & a_Settings, bool a_Shoul
 bool cServer::InitServer(cSettingsRepositoryInterface & a_Settings, bool a_ShouldAuth)
 {
 	m_Description = a_Settings.GetValueSet("Server", "Description", "Cuberite_dfgg - in C++!");
-	m_ShutdownMessage = a_Settings.GetValueSet("Server", "ShutdownMessage", "Server shutdown");
+	m_ShutdownMessage = a_Settings.GetValueSet("Server", "ShutdownMessage", "服务器已关闭");
 	m_MaxPlayers = static_cast<size_t>(a_Settings.GetValueSetI("Server", "MaxPlayers", 100));
 	m_bIsHardcore = a_Settings.GetValueSetB("Server", "HardcoreEnabled", false);
 	m_bAllowMultiLogin = a_Settings.GetValueSetB("Server", "AllowMultiLogin", false);
