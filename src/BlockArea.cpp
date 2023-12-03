@@ -1,4 +1,3 @@
-
 // BlockArea.cpp
 
 // NOTE: compile.sh checks for this file in order to determine if this is the Cuberite folder.
@@ -345,7 +344,7 @@ void cBlockArea::Create(int a_SizeX, int a_SizeY, int a_SizeZ, int a_DataTypes)
 	// Warn if the height is too much, but proceed with the creation:
 	if (a_SizeY > cChunkDef::Height)
 	{
-		LOGWARNING("Creating a cBlockArea with height larger than world height (%d). Continuing, but the area may misbehave.", a_SizeY);
+		LOGWARNING("创建高度大于世界高度 (%d) 的 cBlockArea。继续，但该区域可能行为不端。", a_SizeY);
 	}
 
 	Clear();
@@ -545,7 +544,7 @@ void cBlockArea::CopyTo(cBlockArea & a_Into) const
 {
 	if (&a_Into == this)
 	{
-		LOGWARNING("Trying to copy a cBlockArea into self, ignoring.");
+		LOGWARNING("试图将 cBlockArea 复制到 self 中，忽略。");
 		return;
 	}
 
@@ -598,7 +597,7 @@ void cBlockArea::DumpToRawFile(const AString & a_FileName)
 	cFile f;
 	if (!f.Open(a_FileName, cFile::fmWrite))
 	{
-		LOGWARNING("cBlockArea: Cannot open file \"%s\" for raw dump", a_FileName.c_str());
+		LOGWARNING("cBlockArea：无法打开原始转储的文件 \"%s\" ", a_FileName.c_str());
 		return;
 	}
 	UInt32 SizeX = ntohl(static_cast<UInt32>(m_Size.x));
