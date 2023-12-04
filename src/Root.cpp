@@ -937,15 +937,15 @@ void cRoot::LogChunkStats(cCommandOutputCallback & a_Output)
 		int NumDirty = 0;
 		int NumInLighting = 0;
 		World.GetChunkStats(NumValid, NumDirty, NumInLighting);
-		a_Output.OutLn(fmt::format(FMT_STRING("World {}:"), World.GetName()));
-		a_Output.OutLn(fmt::format(FMT_STRING("  Num loaded chunks: {}"), NumValid));
-		a_Output.OutLn(fmt::format(FMT_STRING("  Num dirty chunks: {}"), NumDirty));
-		a_Output.OutLn(fmt::format(FMT_STRING("  Num chunks in lighting queue: {}"), NumInLighting));
-		a_Output.OutLn(fmt::format(FMT_STRING("  Num chunks in generator queue: {}"), NumInGenerator));
-		a_Output.OutLn(fmt::format(FMT_STRING("  Num chunks in storage load queue: {}"), NumInLoadQueue));
-		a_Output.OutLn(fmt::format(FMT_STRING("  Num chunks in storage save queue: {}"), NumInSaveQueue));
+		a_Output.OutLn(fmt::format(FMT_STRING("世界 {}:"), World.GetName()));
+		a_Output.OutLn(fmt::format(FMT_STRING("  加载的块数: {}"), NumValid));
+		a_Output.OutLn(fmt::format(FMT_STRING("  Num 脏块: {}"), NumDirty));
+		a_Output.OutLn(fmt::format(FMT_STRING("  照明队列中的块数: {}"), NumInLighting));
+		a_Output.OutLn(fmt::format(FMT_STRING("  生成器队列中的块数: {}"), NumInGenerator));
+		a_Output.OutLn(fmt::format(FMT_STRING("  存储加载队列中的块数: {}"), NumInLoadQueue));
+		a_Output.OutLn(fmt::format(FMT_STRING("  存储保存队列中的块数: {}"), NumInSaveQueue));
 		int Mem = NumValid * static_cast<int>(sizeof(cChunk));
-		a_Output.OutLn(fmt::format(FMT_STRING("  Memory used by chunks: {} KiB ({} MiB)"), (Mem + 1023) / 1024, (Mem + 1024 * 1024 - 1) / (1024 * 1024)));
+		a_Output.OutLn(fmt::format(FMT_STRING("  块使用的内存： {} KiB ({} MiB)"), (Mem + 1023) / 1024, (Mem + 1024 * 1024 - 1) / (1024 * 1024)));
 		SumNumValid += NumValid;
 		SumNumDirty += NumDirty;
 		SumNumInLighting += NumInLighting;
@@ -953,17 +953,17 @@ void cRoot::LogChunkStats(cCommandOutputCallback & a_Output)
 		SumMem += Mem;
 	}
 	a_Output.OutLn("Totals:");
-	a_Output.OutLn(fmt::format(FMT_STRING("  Num loaded chunks: {}"), SumNumValid));
-	a_Output.OutLn(fmt::format(FMT_STRING("  Num dirty chunks: {}"), SumNumDirty));
-	a_Output.OutLn(fmt::format(FMT_STRING("  Num chunks in lighting queue: {}"), SumNumInLighting));
-	a_Output.OutLn(fmt::format(FMT_STRING("  Num chunks in generator queue: {}"), SumNumInGenerator));
-	a_Output.OutLn(fmt::format(FMT_STRING("  Memory used by chunks: {} KiB ({} MiB)"), (SumMem + 1023) / 1024, (SumMem + 1024 * 1024 - 1) / (1024 * 1024)));
-	a_Output.OutLn("Per-chunk memory size breakdown:");
-	a_Output.OutLn(fmt::format(FMT_STRING("  block types:    {:06} bytes ({:3} KiB)"), sizeof(cChunkDef::BlockTypes), (sizeof(cChunkDef::BlockTypes) + 1023) / 1024));
-	a_Output.OutLn(fmt::format(FMT_STRING("  block metadata: {:06} bytes ({:3} KiB)"), sizeof(cChunkDef::BlockNibbles), (sizeof(cChunkDef::BlockNibbles) + 1023) / 1024));
-	a_Output.OutLn(fmt::format(FMT_STRING("  block lighting: {:06} bytes ({:3} KiB)"), 2 * sizeof(cChunkDef::BlockNibbles), (2 * sizeof(cChunkDef::BlockNibbles) + 1023) / 1024));
-	a_Output.OutLn(fmt::format(FMT_STRING("  heightmap:      {:06} bytes ({:3} KiB)"), sizeof(cChunkDef::HeightMap), (sizeof(cChunkDef::HeightMap) + 1023) / 1024));
-	a_Output.OutLn(fmt::format(FMT_STRING("  biomemap:       {:06} bytes ({:3} KiB)"), sizeof(cChunkDef::BiomeMap), (sizeof(cChunkDef::BiomeMap) + 1023) / 1024));
+	a_Output.OutLn(fmt::format(FMT_STRING("  加载的块数: {}"), SumNumValid));
+	a_Output.OutLn(fmt::format(FMT_STRING("  Num 脏块: {}"), SumNumDirty));
+	a_Output.OutLn(fmt::format(FMT_STRING("  照明队列中的块数: {}"), SumNumInLighting));
+	a_Output.OutLn(fmt::format(FMT_STRING("  生成器队列中的块数: {}"), SumNumInGenerator));
+	a_Output.OutLn(fmt::format(FMT_STRING("  块使用的内存: {} KiB ({} MiB)"), (SumMem + 1023) / 1024, (SumMem + 1024 * 1024 - 1) / (1024 * 1024)));
+	a_Output.OutLn("每个区块内存大小细分:");
+	a_Output.OutLn(fmt::format(FMT_STRING("  块类型:    {:06} bytes ({:3} KiB)"), sizeof(cChunkDef::BlockTypes), (sizeof(cChunkDef::BlockTypes) + 1023) / 1024));
+	a_Output.OutLn(fmt::format(FMT_STRING("  块元数据: {:06} bytes ({:3} KiB)"), sizeof(cChunkDef::BlockNibbles), (sizeof(cChunkDef::BlockNibbles) + 1023) / 1024));
+	a_Output.OutLn(fmt::format(FMT_STRING("  块状照明: {:06} bytes ({:3} KiB)"), 2 * sizeof(cChunkDef::BlockNibbles), (2 * sizeof(cChunkDef::BlockNibbles) + 1023) / 1024));
+	a_Output.OutLn(fmt::format(FMT_STRING("  高度图:      {:06} bytes ({:3} KiB)"), sizeof(cChunkDef::HeightMap), (sizeof(cChunkDef::HeightMap) + 1023) / 1024));
+	a_Output.OutLn(fmt::format(FMT_STRING("  生物群落地图:       {:06} bytes ({:3} KiB)"), sizeof(cChunkDef::BiomeMap), (sizeof(cChunkDef::BiomeMap) + 1023) / 1024));
 }
 
 
