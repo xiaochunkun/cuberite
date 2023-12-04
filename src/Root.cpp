@@ -111,16 +111,16 @@ bool cRoot::Run(cSettingsRepositoryInterface & a_OverridesRepo)
 		auto fileLogListenerRet = MakeFileListener();
 		if (!fileLogListenerRet.first)
 		{
-			throw std::runtime_error("failed to open log file");
+			throw std::runtime_error("无法打开日志文件");
 		}
 		fileAttachment = cLogger::GetInstance().AttachListener(std::move(fileLogListenerRet.second));
 	}
 
-	LOG("--- Started Log ---");
+	LOG("---启动日志---");
 
 #ifdef BUILD_ID
-	LOG("Cuberite " BUILD_SERIES_NAME " (id: " BUILD_ID ")");
-	LOG("from commit " BUILD_COMMIT_ID " built at: " BUILD_DATETIME);
+	LOG("Cuberite_dfgg " BUILD_SERIES_NAME " (编号: " BUILD_ID ")");
+	LOG("从 提交 " BUILD_COMMIT_ID " 构建于: " BUILD_DATETIME);
 #endif
 
 	cDeadlockDetect dd;
@@ -128,10 +128,10 @@ bool cRoot::Run(cSettingsRepositoryInterface & a_OverridesRepo)
 
 	LoadGlobalSettings();
 
-	LOG("Creating new server instance...");
+	LOG("正在创建新的服务器实例...");
 	m_Server = new cServer();
 
-	LOG("Reading server config...");
+	LOG("");
 
 	m_SettingsFilename = "settings.ini";
 	if (a_OverridesRepo.HasValue("Server","ConfigFile"))
@@ -144,14 +144,14 @@ bool cRoot::Run(cSettingsRepositoryInterface & a_OverridesRepo)
 
 	if (IsNewIniFile)
 	{
-		LOGWARN("Regenerating settings.ini, all settings will be reset");
-		IniFile->AddHeaderComment(" This is the main server configuration");
-		IniFile->AddHeaderComment(" Most of the settings here can be configured using the webadmin interface, if enabled in webadmin.ini");
+		LOGWARN("重新生成settings.ini，所有设置都将重置");
+		IniFile->AddHeaderComment(" 这是主服务器配置");
+		IniFile->AddHeaderComment(" 如果启用了 webadmin 界面，则可以使用 webadmin 界面配置此处的大多数设置 webadmin.ini");
 	}
 
 	auto settingsRepo = std::make_unique<cOverridesSettingsRepository>(std::move(IniFile), a_OverridesRepo);
 
-	LOG("Starting server...");
+	LOG("正在启动服务器...");
 
 	// cClientHandle::FASTBREAK_PERCENTAGE = settingsRepo->GetValueSetI("AntiCheat", "FastBreakPercentage", 97) / 100.0f;
 	cClientHandle::FASTBREAK_PERCENTAGE = 0;  // AntiCheat disabled due to bugs. We will enabled it once they are fixed. See #3506.
@@ -162,13 +162,13 @@ bool cRoot::Run(cSettingsRepositoryInterface & a_OverridesRepo)
 	if (!m_Server->InitServer(*settingsRepo, ShouldAuthenticate))
 	{
 		settingsRepo->Flush();
-		throw std::runtime_error("failure starting server");
+		throw std::runtime_error("启动服务器失败");
 	}
 
 	m_WebAdmin = new cWebAdmin();
 	m_WebAdmin->Init();
 
-	LOGD("Loading settings...");
+	LOGD("正在加载设置...");
 	m_RankManager.reset(new cRankManager());
 	m_RankManager->Initialize(*m_MojangAPI);
 	m_CraftingRecipes = new cCraftingRecipes();
@@ -176,37 +176,37 @@ bool cRoot::Run(cSettingsRepositoryInterface & a_OverridesRepo)
 	m_FurnaceRecipe   = new cFurnaceRecipe();
 	m_BrewingRecipes.reset(new cBrewingRecipes());
 
-	LOGD("Loading worlds...");
+	LOGD("正在加载世界...");
 	LoadWorlds(dd, *settingsRepo, IsNewIniFile);
 
-	LOGD("Loading plugin manager...");
+	LOGD("正在加载插件管理器...");
 	m_PluginManager = new cPluginManager(dd);
 	m_PluginManager->ReloadPluginsNow(*settingsRepo);
 
-	LOGD("Loading MonsterConfig...");
+	LOGD("正在加载 MonsterConfig...");
 	m_MonsterConfig = new cMonsterConfig;
 
 	// This sets stuff in motion
-	LOGD("Starting Authenticator...");
+	LOGD("正在启动身份验证器...");
 	m_Authenticator.Start(*settingsRepo);
 
-	LOGD("Starting worlds...");
+	LOGD("开始加载世界...");
 	StartWorlds(dd);
 
 	if (settingsRepo->GetValueSetB("DeadlockDetect", "Enabled", true))
 	{
-		LOGD("Starting deadlock detector...");
+		LOGD("正在启动死锁检测器...");
 		dd.Start(settingsRepo->GetValueSetI("DeadlockDetect", "IntervalSec", 20));
 	}
 
 	settingsRepo->Flush();
 
-	LOGD("Finalising startup...");
+	LOGD("正在完成启动...");
 	if (m_Server->Start())
 	{
 		m_WebAdmin->Start();
 
-		LOG("Startup complete, took %ldms!", static_cast<long int>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - BeginTime).count()));
+		LOG("启动完成，采取 %ldms!", static_cast<long int>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - BeginTime).count()));
 
 		// Save the current time
 		m_StartTime = std::chrono::steady_clock::now();
@@ -217,37 +217,37 @@ bool cRoot::Run(cSettingsRepositoryInterface & a_OverridesRepo)
 		// Stop the server:
 		m_WebAdmin->Stop();
 
-		LOG("Shutting down server...");
+		LOG("正在关闭服务器...");
 		m_Server->Shutdown();
 	}  // if (m_Server->Start()
 
 	delete m_MojangAPI; m_MojangAPI = nullptr;
 
-	LOGD("Shutting down deadlock detector...");
+	LOGD("正在关闭死锁检测器...");
 	dd.Stop();
 
-	LOGD("Stopping world threads...");
+	LOGD("正在停止世界线程...");
 	StopWorlds(dd);
 
-	LOGD("Stopping authenticator...");
+	LOGD("正在停止身份验证器...");
 	m_Authenticator.Stop();
 
-	LOGD("Freeing MonsterConfig...");
+	LOGD("释放 MonsterConfig...");
 	delete m_MonsterConfig; m_MonsterConfig = nullptr;
 	delete m_WebAdmin; m_WebAdmin = nullptr;
 
-	LOGD("Unloading recipes...");
+	LOGD("卸载食谱...");
 	delete m_FurnaceRecipe;   m_FurnaceRecipe = nullptr;
 	delete m_CraftingRecipes; m_CraftingRecipes = nullptr;
 
-	LOGD("Stopping plugin manager...");
+	LOGD("正在停止插件管理器...");
 	delete m_PluginManager; m_PluginManager = nullptr;
 
-	LOG("Cleaning up...");
+	LOG("正在清理...");
 	delete m_Server; m_Server = nullptr;
 
-	LOG("Shutdown successful!");
-	LOG("--- Stopped Log ---");
+	LOG("关机成功！");
+	LOG("--- 已停止的日志---");
 
 	return s_NextState == NextState::Restart;
 }
@@ -529,7 +529,7 @@ void cRoot::QueueExecuteConsoleCommand(const AString & a_Cmd, cCommandOutputCall
 		return;
 	}
 
-	LOG("Executing console command: \"%s\"", a_Cmd.c_str());
+	LOG("执行控制台命令： \"%s\"", a_Cmd.c_str());
 	m_Server->ExecuteConsoleCommand(a_Cmd, a_Output);
 }
 
@@ -828,7 +828,7 @@ int cRoot::GetVirtualRAMUsage(void)
 		}
 		return -1;
 	#else
-		LOGINFO("%s: Unknown platform, cannot query memory usage", __FUNCTION__);
+		LOGINFO("%s: 未知平台，无法查询内存使用情况", __FUNCTION__);
 		return -1;
 	#endif
 }
@@ -911,7 +911,7 @@ int cRoot::GetPhysicalRAMUsage(void)
 		}
 		return -1;
 	#else
-		LOGINFO("%s: Unknown platform, cannot query memory usage", __FUNCTION__);
+		LOGINFO("%s: 未知平台，无法查询内存使用情况", __FUNCTION__);
 		return -1;
 	#endif
 }
