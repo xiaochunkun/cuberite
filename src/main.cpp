@@ -32,7 +32,7 @@ bool g_RunAsService;
 static void ParseArguments(int argc, char ** argv, cMemorySettingsRepository & a_Settings)
 {
 	// Parse the comand line args:
-	TCLAP::CmdLine cmd("Cuberite");
+	TCLAP::CmdLine cmd("Cuberite_dfgg");
 	TCLAP::ValueArg<int> slotsArg    ("s", "max-players",         "Maximum number of slots for the server to use, overrides setting in setting.ini", false, -1, "number", cmd);
 	TCLAP::ValueArg<AString> confArg ("c", "config-file",         "Config file to use", false, "settings.ini", "string", cmd);
 	TCLAP::MultiArg<int> portsArg    ("p", "port",                "The port number the server should listen to", false, "port", cmd);
