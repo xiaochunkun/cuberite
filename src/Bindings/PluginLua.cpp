@@ -128,8 +128,8 @@ bool cPluginLua::Load(void)
 	// Warn if there are no Lua files in the plugin folder:
 	if (LuaFiles.empty())
 	{
-		SetLoadError("No lua files found, plugin is probably missing.");
-		LOGWARNING("No lua files found: plugin %s is missing.", GetName().c_str());
+		SetLoadError("未找到 lua 文件，插件可能丢失。");
+		LOGWARNING("未找到 lua 文件：缺少插件 %s。", GetName().c_str());
 		Close();
 		return false;
 	}
@@ -140,7 +140,7 @@ bool cPluginLua::Load(void)
 		AString Path = PluginPath + *itr;
 		if (!m_LuaState.LoadFile(Path))
 		{
-			SetLoadError(fmt::format(FMT_STRING("Failed to load file {}."), *itr));
+			SetLoadError(fmt::format(FMT_STRING("无法加载文件 {}."), *itr));
 			Close();
 			return false;
 		}
@@ -150,7 +150,7 @@ bool cPluginLua::Load(void)
 		AString Path = PluginPath + "Info.lua";
 		if (!m_LuaState.LoadFile(Path))
 		{
-			SetLoadError("Failed to load file Info.lua.");
+			SetLoadError("无法加载文件 Info.lua.");
 			Close();
 			return false;
 		}
