@@ -114,7 +114,7 @@ void cPluginManager::ReloadPluginsNow(void)
 
 void cPluginManager::ReloadPluginsNow(cSettingsRepositoryInterface & a_Settings)
 {
-	LOG("-- Loading Plugins --");
+	LOG("-- 加载插件 --");
 
 	// Unload any existing plugins:
 	m_bReloadPlugins = false;
@@ -134,15 +134,15 @@ void cPluginManager::ReloadPluginsNow(cSettingsRepositoryInterface & a_Settings)
 	size_t NumLoadedPlugins = GetNumLoadedPlugins();
 	if (NumLoadedPlugins == 0)
 	{
-		LOG("-- No Plugins Loaded --");
+		LOG("-- 未加载插件 --");
 	}
 	else if (NumLoadedPlugins == 1)
 	{
-		LOG("-- Loaded 1 Plugin --");
+		LOG("-- 加载了 1 个插件 --");
 	}
 	else
 	{
-		LOG("-- Loaded %u Plugins --", static_cast<unsigned>(NumLoadedPlugins));
+		LOG("-- 加载了 %u 个插件 --", static_cast<unsigned>(NumLoadedPlugins));
 	}
 	CallHookPluginsLoaded();
 }
@@ -156,6 +156,7 @@ void cPluginManager::InsertDefaultPlugins(cSettingsRepositoryInterface & a_Setti
 	a_Settings.AddKeyName("Plugins");
 	a_Settings.AddValue("Plugins", "Core", "1");
 	a_Settings.AddValue("Plugins", "ChatLog", "1");
+    a_Settings.AddValue("Plugins", "Essentials", "1");
 	a_Settings.AddValue("Plugins", "ProtectionAreas", "0");
 }
 
@@ -208,11 +209,11 @@ void cPluginManager::Tick(float a_Dt)
 		}
 		if (!WasFound)
 		{
-			LOG("Cannot act on plugin in folder \"%s\", there's no such plugin folder", Folder.c_str());
+			LOG("无法对文件夹 \"%s\" 中的插件执行操作，没有这样的插件文件夹", Folder.c_str());
 		}
 		else if (!WasLoaded)
 		{
-			LOG("Cannot act on plugin in folder \"%s\", it has not been loaded.", Folder.c_str());
+			LOG("无法对文件夹 \"%s\" 中的插件执行操作，它尚未加载。", Folder.c_str());
 		}
 	}  // for plugin - m_Plugins[]
 
@@ -335,14 +336,14 @@ bool cPluginManager::CallHookChat(cPlayer & a_Player, AString & a_Message)
 		case crError:
 		{
 			// An error in the plugin has prevented the command from executing. Report the error to the player:
-			a_Player.SendMessageFailure(fmt::format(FMT_STRING("Something went wrong while executing command \"{}\""), a_Message));
+			a_Player.SendMessageFailure(fmt::format(FMT_STRING("执行命令时出错 \"{}\""), a_Message));
 			return true;
 		}
 
 		case crNoPermission:
 		{
 			// The player is not allowed to execute this command
-			a_Player.SendMessageFailure(fmt::format(FMT_STRING("Forbidden command; insufficient privileges: \"{}\""), a_Message));
+			a_Player.SendMessageFailure(fmt::format(FMT_STRING("禁止的命令;权限不足： \"{}\""), a_Message));
 			return true;
 		}
 
@@ -358,8 +359,8 @@ bool cPluginManager::CallHookChat(cPlayer & a_Player, AString & a_Message)
 	{
 		AStringVector Split(StringSplit(a_Message, " "));
 		ASSERT(!Split.empty());  // This should not happen - we know there's at least one char in the message so the split needs to be at least one item long
-		a_Player.SendMessageInfo(fmt::format(FMT_STRING("Unknown command: \"{}\""), a_Message));
-		LOGINFO("Player %s issued an unknown command: \"%s\"", a_Player.GetName(), a_Message);
+		a_Player.SendMessageInfo(fmt::format(FMT_STRING("未知命令： \"{}\""), a_Message));
+		LOGINFO("玩家 %s 发出了未知命令： \"%s\"", a_Player.GetName(), a_Message);
 		return true;  // Cancel sending
 	}
 
@@ -548,7 +549,7 @@ bool cPluginManager::CallHookExecuteCommand(cPlayer * a_Player, const AStringVec
 			worldName = "<no world>";
 			worldAge = 0;
 		}
-		LOG("Player %s is executing command \"%s\" in world \"%s\" at world age %lld.",
+		LOG("玩家 %s 在世界 \"%s\" 中执行命令 \"%s\" 在世界时间的 %lld 。",
 			a_Player->GetName().c_str(),
 			a_EntireCommand.c_str(),
 			worldName.c_str(),
@@ -1281,7 +1282,7 @@ cPluginManager::CommandResult cPluginManager::HandleCommand(cPlayer & a_Player, 
 	{
 		if (Result == crBlocked)
 		{
-			LOGINFO("Player %s tried executing command \"%s\" that was stopped by the HOOK_EXECUTE_COMMAND hook", a_Player.GetName().c_str(), Split[0].c_str());
+			LOGINFO("玩家 %s 尝试执行被HOOK_EXECUTE_COMMAND钩子阻止的命令 \"%s\" ", a_Player.GetName().c_str(), Split[0].c_str());
 		}
 		return Result;
 	}
@@ -1292,7 +1293,7 @@ cPluginManager::CommandResult cPluginManager::HandleCommand(cPlayer & a_Player, 
 		!a_Player.HasPermission(cmd->second.m_Permission)
 	)
 	{
-		LOGINFO("Player %s tried to execute forbidden command: \"%s\"", a_Player.GetName().c_str(), Split[0].c_str());
+		LOGINFO("玩家 %s 尝试执行禁止的命令： \"%s\"", a_Player.GetName().c_str(), Split[0].c_str());
 		return crNoPermission;
 	}
 
@@ -1369,7 +1370,7 @@ bool cPluginManager::LoadPlugin(const AString & a_FolderName)
 	}  // for plugin - m_Plugins[]
 
 	// Plugin not found
-	LOG("Cannot load plugin, folder \"%s\" not found.", a_FolderName.c_str());
+	LOG("无法加载插件，找不到文件夹 \"%s\" 。", a_FolderName.c_str());
 	return false;
 }
 
@@ -1437,7 +1438,7 @@ bool cPluginManager::BindCommand(
 	CommandMap::iterator cmd = m_Commands.find(a_Command);
 	if (cmd != m_Commands.end())
 	{
-		LOGWARNING("Command \"%s\" is already bound to plugin \"%s\".", a_Command.c_str(), cmd->second.m_Plugin->GetName().c_str());
+		LOGWARNING("命令 \"%s\" 已绑定到插件 \"%s\" 。", a_Command.c_str(), cmd->second.m_Plugin->GetName().c_str());
 		return false;
 	}
 
@@ -1539,11 +1540,11 @@ bool cPluginManager::BindConsoleCommand(
 	{
 		if (cmd->second.m_Plugin == nullptr)
 		{
-			LOGWARNING("Console command \"%s\" is already bound internally by Cuberite, cannot bind in plugin \"%s\".", a_Command.c_str(), a_Plugin->GetName().c_str());
+			LOGWARNING("控制台命令 \"%s\" 已被 Cuberite 内部绑定，无法在插件 \"%s\" 中绑定。", a_Command.c_str(), a_Plugin->GetName().c_str());
 		}
 		else
 		{
-			LOGWARNING("Console command \"%s\" is already bound to plugin \"%s\", cannot bind in plugin \"%s\".", a_Command.c_str(), cmd->second.m_Plugin->GetName().c_str(), a_Plugin->GetName().c_str());
+			LOGWARNING("控制台命令 \"%s\" 已绑定到插件 \"%s\"，无法绑定到插件 \"%s\" 中。", a_Command.c_str(), cmd->second.m_Plugin->GetName().c_str(), a_Plugin->GetName().c_str());
 		}
 		return false;
 	}
