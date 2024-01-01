@@ -17,7 +17,7 @@ DEFAULT_THREADS=1
 
 # Constants not modifiable through command line:
 UPSTREAM_REPO="origin"
-UPSTREAM_LINK="https://gitee.com/dfggmc/cuberite_dfgg.git"
+UPSTREAM_LINK="https://github.com/xiaochunkun/cuberite.git"
 
 #=================== Error functions ===================
 
@@ -170,7 +170,7 @@ STATE_NEW=1
 if checkCuberiteDir; then # Check if we're in the Cuberite directory...
 	STATE_NEW=0
 elif [ -d cuberite ]; then # If there's a directory named "cuberite"...
-	cd cuberite_dfgg
+	cd cuberite
 	if checkCuberiteDir; then # Check if we're in the Cuberite directory...
 		STATE_NEW=0
 	else
