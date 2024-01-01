@@ -1,5 +1,5 @@
 @echo off
-echo This script generates the certificate and private key for the https webadmin
+echo 本脚本用于创建
 echo Note that the generated certificate is self-signed, and therefore not trusted by browsers
 echo Note that this script requires openssl to be installed and in PATH
 echo.

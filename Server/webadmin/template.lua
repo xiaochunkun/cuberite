@@ -11,20 +11,20 @@ end
 local function GetDefaultPage()
 	local PM = cRoot:Get():GetPluginManager()
 
-	local SubTitle = "Current Game"
+	local SubTitle = "概览"
 	local Content = ""
 
-	Content = Content .. "<h4>Plugins:</h4><ul>"
+	Content = Content .. "<h4>插件:</h4><ul>"
 	PM:ForEachPlugin(
 		function (a_CBPlugin)
 			if (a_CBPlugin:IsLoaded()) then
-				Content = Content ..  "<li>" .. a_CBPlugin:GetName() .. " (version " .. a_CBPlugin:GetVersion() .. ")</li>"
+				Content = Content ..  "<li>" .. a_CBPlugin:GetName() .. " (版本 " .. a_CBPlugin:GetVersion() .. ")</li>"
 			end
 		end
 	)
 
 	Content = Content .. "</ul>"
-	Content = Content .. "<h4>Players:</h4><ul>"
+	Content = Content .. "<h4>玩家:</h4><ul>"
 
 	cRoot:Get():ForEachPlayer(
 		function(a_CBPlayer)
@@ -44,7 +44,7 @@ end
 function ShowPage(WebAdmin, TemplateRequest)
 	SiteContent = {}
 	local BaseURL = cWebAdmin:GetBaseURL(TemplateRequest.Request.Path)
-	local Title = "Cuberite WebAdmin"
+	local Title = "Cuberite Web 管理系统"
 	local NumPlayers = cRoot:Get():GetServer():GetNumPlayers()
 	local MemoryUsageKiB = cRoot:GetPhysicalRAMUsage()
 	local NumChunks = cRoot:Get():GetTotalChunkCount()
@@ -77,13 +77,13 @@ function ShowPage(WebAdmin, TemplateRequest)
 <div class="panel">
 	<div class="wrapper">
 		<div class="welcome">
-			<strong>Welcome back, ]] .. TemplateRequest.Request.Username .. [[</strong>
-			<a href="/" class="link-logout">Log out</a>
+			<strong>欢迎您, ]] .. TemplateRequest.Request.Username .. [[</strong>
+			<a href="/" class="link-logout">退出</a>
 		</div>
 		<ul class="stats">
-			<li>Players online: <strong>]] .. NumPlayers .. [[</strong></li>
-			<li>Memory: <strong>]] .. string.format("%.2f", MemoryUsageKiB / 1024) .. [[MB</strong></li>
-			<li>Chunks: <strong>]] .. NumChunks .. [[</strong></li>
+			<li>在线玩家: <strong>]] .. NumPlayers .. [[</strong></li>
+			<li>内存用量: <strong>]] .. string.format("%.2f", MemoryUsageKiB / 1024) .. [[MB</strong></li>
+			<li>区块数: <strong>]] .. NumChunks .. [[</strong></li>
 		</ul>
 	</div>
 </div>
@@ -94,10 +94,10 @@ function ShowPage(WebAdmin, TemplateRequest)
 				<h2 class="head color-background">Menu</h2>
 				<ul class="sidebar">
 					<li>
-						<a href="]] .. BaseURL .. [[" class="link-home">Home</a>
+						<a href="]] .. BaseURL .. [[" class="link-home">主页</a>
 					</li>
 				</ul>
-				<div class="category">Server Management</div>
+				<div class="category">服务器管理</div>
 				<ul class="sidebar">
 	]])
 
@@ -150,12 +150,12 @@ function ShowPage(WebAdmin, TemplateRequest)
 <div class="footer">
 	<div class="footer-container">
 		<div class="wrapper">
-			<span class="copyright">Copyright © <a href="https://cuberite.org/" target="_blank">Cuberite Team</a></span>
+			<span class="copyright">Copyright © <a href="https://cuberite.org/" target="_blank">Cuberite 团队</a></span>
 			<ul class="footer-links">
-				<li><a href="https://cuberite.org/" target="_blank">Cuberite</a></li>
-				<li><a href="https://forum.cuberite.org/" target="_blank">Forums</a></li>
-				<li><a href="https://api.cuberite.org/" target="_blank">API Docs</a></li>
-				<li><a href="https://book.cuberite.org/" target="_blank">User's Manual</a></li>
+				<li><a href="https://cuberite.org/" target="_blank">Cuberite 主页</a></li>
+				<li><a href="https://forum.cuberite.org/" target="_blank">论坛</a></li>
+				<li><a href="https://api.cuberite.org/" target="_blank">API 文档</a></li>
+				<li><a href="https://book.cuberite.org/" target="_blank">用户手册</a></li>
 			</ul>
 		</div>
 	</div>
